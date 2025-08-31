@@ -1,0 +1,55 @@
+-- Nikollvesga Fire Sword Móvil/PC KRNL
+local player = game.Players.LocalPlayer
+local backpack = player:WaitForChild("Backpack")
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+
+-- Crear la espada
+local sword = Instance.new("Tool")
+sword.Name = "FireSword"
+sword.RequiresHandle = true
+sword.CanBeDropped = true
+sword.Parent = backpack
+
+-- Crear el Handle (la hoja de la espada)
+local handle = Instance.new("Part")
+handle.Name = "Handle"
+handle.Size = Vector3.new(1,5,0.5) -- tamaño estilo espada
+handle.BrickColor = BrickColor.new("Bright yellow") -- dorada
+handle.Material = Enum.Material.Neon
+handle.Parent = sword
+
+-- Agregar fuego dorado
+local fire = Instance.new("Fire")
+fire.Heat = 15
+fire.Size = 10
+fire.Color = Color3.fromRGB(255, 215, 0) -- dorado
+fire.SecondaryColor = Color3.fromRGB(255, 150, 0)
+fire.Parent = handle
+
+-- Crear Animator para animación de ataque
+local animator = humanoid:FindFirstChildWhichIsA("Animator")
+if not animator then
+    animator = Instance.new("Animator")
+    animator.Parent = humanoid
+end
+
+-- Animación de ataque (puedes crear tu animación en Roblox y poner el ID aquí)
+local attackAnimation = Instance.new("Animation")
+attackAnimation.AnimationId = "rbxassetid://INSERT_ANIMATION_ID_HERE" -- reemplaza con tu animación
+local attackTrack = animator:LoadAnimation(attackAnimation)
+
+-- Activar animación al tocar pantalla / click
+sword.Activated:Connect(function()
+    attackTrack:Play()
+end)
+
+-- Daño al tocar enemigos
+handle.Touched:Connect(function(hit)
+    local h = hit.Parent:FindFirstChildOfClass("Humanoid")
+    if h and hit.Parent ~= character then
+        h:TakeDamage(25) -- daño
+    end
+end)
+
+print("🔥 Nikollvesga Fire Sword lista! Toca la pantalla para atacar.")
