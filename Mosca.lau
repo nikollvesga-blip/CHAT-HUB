@@ -1,0 +1,50 @@
+-- Nikollvesga Duolingo Gigante Proporcional + Bola de Fuego KRNL
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+local hrp = character:WaitForChild("HumanoidRootPart")
+local mouse = player:GetMouse()
+local Debris = game:GetService("Debris")
+
+-- Función para escalar personaje proporcionalmente
+local function escalarGigante(scale)
+    -- Ajustar Humanoid
+    humanoid.BodyHeightScale.Value = humanoid.BodyHeightScale.Value * scale
+    humanoid.BodyWidthScale.Value = humanoid.BodyWidthScale.Value * scale
+    humanoid.BodyDepthScale.Value = humanoid.BodyDepthScale.Value * scale
+    humanoid.HeadScale.Value = humanoid.HeadScale.Value * scale
+    humanoid.HipHeight = humanoid.HipHeight * scale
+    humanoid.WalkSpeed = humanoid.WalkSpeed * 1.5
+    humanoid.JumpPower = humanoid.JumpPower * 1.5
+end
+
+-- Aplicar escala gigante
+escalarGigante(5)
+
+-- Función para lanzar bola de fuego hacia un punto
+local function lanzarBola(targetPos)
+    local fireball = Instance.new("Part")
+    fireball.Size = Vector3.new(4,4,4)
+    fireball.Shape = Enum.PartType.Ball
+    fireball.Material = Enum.Material.Neon
+    fireball.BrickColor = BrickColor.new("Bright orange")
+    fireball.Position = hrp.Position + Vector3.new(0,5,0)
+    fireball.Anchored = false
+    fireball.CanCollide = false
+    fireball.Parent = workspace
+
+    local fire = Instance.new("Fire")
+    fire.Heat = 20
+    fire.Size = 10
+    fire.Color = Color3.fromRGB(255,150,0)
+    fire.SecondaryColor = Color3.fromRGB(255,50,0)
+    fire.Parent = fireball
+
+    -- Sonido de lanzamiento
+    local launchSound = Instance.new("Sound")
+    launchSound.SoundId = "rbxassetid://9118821631"
+    launchSound.Volume = 1
+    launchSound.Parent = fireball
+    launchSound:Play()
+
+    -- Vel
