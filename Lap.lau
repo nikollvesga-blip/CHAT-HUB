@@ -1,0 +1,44 @@
+-- Nikollvesga Duolingo Gigante KRNL
+
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+local hrp = character:WaitForChild("HumanoidRootPart")
+local backpack = player:WaitForChild("Backpack")
+local RunService = game:GetService("RunService")
+
+-- 1️⃣ Transformación en Duolingo gigante
+character:MoveTo(hrp.Position) -- asegurarse de estar en el lugar correcto
+
+-- Cambiar tamaño
+for _, part in pairs(character:GetChildren()) do
+    if part:IsA("BasePart") then
+        part.Size = part.Size * 5 -- gigante
+        part.BrickColor = BrickColor.new("Bright green") -- color Duolingo
+    end
+end
+
+-- Cambiar escala del humanoid
+humanoid.HipHeight = humanoid.HipHeight * 5
+humanoid.WalkSpeed = 30
+humanoid.JumpPower = 50
+
+-- Animación de transformación épica (opcional)
+local animator = humanoid:FindFirstChildWhichIsA("Animator")
+if not animator then
+    animator = Instance.new("Animator")
+    animator.Parent = humanoid
+end
+local transformAnim = Instance.new("Animation")
+transformAnim.AnimationId = "rbxassetid://INSERT_TRANSFORM_ANIMATION_ID" -- crea tu animación
+local transformTrack = animator:LoadAnimation(transformAnim)
+transformTrack:Play()
+
+-- 2️⃣ Crear espada de fuego épica
+local sword = Instance.new("Tool")
+sword.Name = "DuolingoSword"
+sword.RequiresHandle = true
+sword.CanBeDropped = true
+sword.Parent = backpack
+
+local handle = Instance
