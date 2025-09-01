@@ -1,0 +1,32 @@
+-- Script para KRNL: mostrar tu skin en todo el mapa
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local workspace = game:GetService("Workspace")
+
+-- Clonar tu personaje y hacer que sea visible a todos
+local function cloneCharacter()
+    local clone = character:Clone()
+    clone.Name = player.Name .. "_Clone"
+    clone.Parent = workspace
+
+    -- Ponerlo en modo no colisionable para que nadie se lastime
+    for _, part in pairs(clone:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.CanCollide = false
+        end
+    end
+
+    -- Posición inicial aleatoria en el mapa
+    local mapSize = 500 -- ajusta según tu mapa
+    clone:SetPrimaryPartCFrame(CFrame.new(
+        math.random(-mapSize,mapSize), 
+        10, 
+        math.random(-mapSize,mapSize)
+    ))
+end
+
+-- Crear clones cada cierto tiempo
+while true do
+    cloneCharacter()
+    wait(5) -- cada 5 segundos aparece un clon nuevo
+end
