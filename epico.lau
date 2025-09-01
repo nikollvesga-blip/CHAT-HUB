@@ -1,0 +1,50 @@
+-- Nikollvesga Superman Drop KRNL
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+local hrp = character:WaitForChild("HumanoidRootPart")
+local Debris = game:GetService("Debris")
+local RunService = game:GetService("RunService")
+
+-- 1️⃣ Animación de caída (simulada con BodyVelocity)
+local fallHeight = 100
+hrp.CFrame = hrp.CFrame + Vector3.new(0, fallHeight, 0) -- levantar personaje en el aire
+local bv = Instance.new("BodyVelocity")
+bv.Velocity = Vector3.new(0, -100, 0) -- velocidad hacia abajo
+bv.MaxForce = Vector3.new(1e5,1e5,1e5)
+bv.Parent = hrp
+
+-- Detectar cuando toca el suelo
+local connection
+connection = hrp.Touched:Connect(function(hit)
+    if hit and hit:IsDescendantOf(game.Workspace) then
+        bv:Destroy()
+        connection:Disconnect()
+
+        -- 2️⃣ Marca en el piso tipo Superman
+        local impact = Instance.new("Part")
+        impact.Size = Vector3.new(10,1,10)
+        impact.Position = hrp.Position - Vector3.new(0, hrp.Size.Y/2, 0)
+        impact.Anchored = true
+        impact.CanCollide = false
+        impact.Material = Enum.Material.Neon
+        impact.BrickColor = BrickColor.new("Bright red")
+        impact.Parent = workspace
+        Debris:AddItem(impact, 3)
+
+        -- 3️⃣ Poner gafas al levantarse
+        local glasses = Instance.new("Part")
+        glasses.Size = Vector3.new(2,0.5,0.5)
+        glasses.Position = character.Head.Position + Vector3.new(0,0,0.2)
+        glasses.Anchored = false
+        glasses.CanCollide = false
+        glasses.BrickColor = BrickColor.new("Really black")
+        glasses.Parent = character
+        local weld = Instance.new("WeldConstraint")
+        weld.Part0 = character.Head
+        weld.Part1 = glasses
+        weld.Parent = glasses
+    end
+end)
+
+print("🦸‍♂️ Caída épica iniciada! Llegas al suelo y se ponen gafas automáticamente.")
