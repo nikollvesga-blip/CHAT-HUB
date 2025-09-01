@@ -1,0 +1,18 @@
+local workspace = game:GetService("Workspace")
+local RunService = game:GetService("RunService")
+local Lighting = game:GetService("Lighting")
+local player = game.Players.LocalPlayer
+local gui = player:WaitForChild("PlayerGui")
+
+-- 1️⃣ Cielo amarillo
+Lighting.Ambient = Color3.fromRGB(255, 255, 200)
+Lighting.OutdoorAmbient = Color3.fromRGB(255, 255, 150)
+
+-- 2️⃣ Nube visible
+local cloud = Instance.new("Part")
+cloud.Size = Vector3.new(20,5,20)
+cloud.Anchored = true
+cloud.Position = Vector3.new(0,50,0)
+cloud.BrickColor = BrickColor.new("Institutional white")
+cloud.Material = Enum.Material.SmoothPlastic
+cloud.Name = "TacoCloud"
