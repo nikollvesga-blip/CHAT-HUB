@@ -1,0 +1,54 @@
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local workspace = game:GetService("Workspace")
+local RunService = game:GetService("RunService")
+local Lighting = game:GetService("Lighting")
+local gui = player:WaitForChild("PlayerGui")
+
+-- 1️⃣ Cambiar cielo a amarillo
+Lighting.Ambient = Color3.fromRGB(255, 255, 200)
+Lighting.OutdoorAmbient = Color3.fromRGB(255, 255, 150)
+
+-- 2️⃣ Crear nube flotante
+local cloud = Instance.new("Part")
+cloud.Size = Vector3.new(20,5,20)
+cloud.Anchored = true
+cloud.Position = Vector3.new(0,50,0)
+cloud.BrickColor = BrickColor.new("Institutional white")
+cloud.Material = Enum.Material.SmoothPlastic
+cloud.Name = "TacoCloud"
+cloud.Parent = workspace
+
+-- 3️⃣ Función para crear tacos cayendo de la nube
+local function spawnTaco()
+    local taco = Instance.new("Part")
+    taco.Size = Vector3.new(2,1,1)
+    taco.BrickColor = BrickColor.new("Bright yellow")
+    taco.Shape = Enum.PartType.Block
+    taco.Anchored = false
+    taco.Position = cloud.Position + Vector3.new(math.random(-10,10),-3,math.random(-10,10))
+    taco.Parent = workspace
+
+    local mesh = Instance.new("SpecialMesh", taco)
+    mesh.MeshId = "rbxassetid://70053154"
+    mesh.TextureId = "rbxassetid://70053155"
+
+    -- Destruir taco al tocar el suelo
+    taco.Touched:Connect(function(hit)
+        if hit:IsA("BasePart") and hit.Name ~= "Baseplate" then
+            taco:Destroy()
+        end
+    end)
+end
+
+-- Spawn continuo de tacos
+RunService.RenderStepped:Connect(function()
+    if math.random() < 0.1 then
+        spawnTaco()
+    end
+end)
+
+-- 4️⃣ Crear bocina gigante visible
+local horn = Instance.new("Part")
+horn.Size = Vector3.new(10,10,15)
+horn.BrickColor = BrickColor.new
