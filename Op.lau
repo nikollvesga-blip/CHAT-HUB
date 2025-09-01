@@ -1,0 +1,95 @@
+-- Nikollvesga Ultra Épico KRNL
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+local hrp = character:WaitForChild("HumanoidRootPart")
+local backpack = player:WaitForChild("Backpack")
+local mouse = player:GetMouse()
+local Debris = game:GetService("Debris")
+local RunService = game:GetService("RunService")
+
+-- Función para escalar gigante proporcional
+local function escalarGigante(scale)
+    humanoid.BodyHeightScale.Value = humanoid.BodyHeightScale.Value * scale
+    humanoid.BodyWidthScale.Value = humanoid.BodyWidthScale.Value * scale
+    humanoid.BodyDepthScale.Value = humanoid.BodyDepthScale.Value * scale
+    humanoid.HeadScale.Value = humanoid.HeadScale.Value * scale
+    humanoid.HipHeight = humanoid.HipHeight * scale
+    humanoid.WalkSpeed = humanoid.WalkSpeed * 1.5
+    humanoid.JumpPower = humanoid.JumpPower * 1.5
+end
+
+-- Escalar gigante
+escalarGigante(5)
+
+-- Animador
+local animator = humanoid:FindFirstChildWhichIsA("Animator")
+if not animator then
+    animator = Instance.new("Animator")
+    animator.Parent = humanoid
+end
+
+-- 1️⃣ Animación volar y caer (Spider-Man)
+local flyAnim = Instance.new("Animation")
+flyAnim.AnimationId = "rbxassetid://INSERT_FLY_ANIMATION_ID"
+local flyTrack = animator:LoadAnimation(flyAnim)
+flyTrack:Play()
+
+-- Caer como Spider-Man después de 2 seg
+task.delay(2,function()
+    flyTrack:Stop()
+    humanoid:ChangeState(Enum.HumanoidStateType.Freefall)
+end)
+
+-- 2️⃣ Sacar espada automáticamente
+task.delay(2.5,function()
+    local sword = backpack:FindFirstChild("EpicSword") -- tu espada
+    if sword then
+        sword.Parent = character
+        humanoid:EquipTool(sword)
+        
+        -- Animación de equipar espada
+        local equipAnim = Instance.new("Animation")
+        equipAnim.AnimationId = "rbxassetid://INSERT_EQUIP_ANIMATION_ID"
+        local equipTrack = animator:LoadAnimation(equipAnim)
+        equipTrack:Play()
+    end
+end)
+
+-- 3️⃣ Función golpe épico al tocar pantalla / click
+local function golpeEpico(targetPos)
+    -- Animación de golpe
+    local golpeAnim = Instance.new("Animation")
+    golpeAnim.AnimationId = "rbxassetid://INSERT_GOLPE_ANIMATION_ID"
+    local golpeTrack = animator:LoadAnimation(golpeAnim)
+    golpeTrack:Play()
+    
+    -- Crear "hueco" en el piso
+    local impact = Instance.new("Part")
+    impact.Size = Vector3.new(10,1,10)
+    impact.Position = Vector3.new(targetPos.X, targetPos.Y, targetPos.Z)
+    impact.Anchored = true
+    impact.CanCollide = false
+    impact.Material = Enum.Material.Neon
+    impact.BrickColor = BrickColor.new("Bright red")
+    impact.Parent = workspace
+    Debris:AddItem(impact,2)
+    
+    -- Daño a enemigos dentro del área
+    for _, obj in pairs(workspace:GetDescendants()) do
+        if obj:IsA("Model") and obj:FindFirstChildOfClass("Humanoid") and obj ~= character then
+            local hPos = obj:FindFirstChild("HumanoidRootPart")
+            if hPos and (hPos.Position - impact.Position).Magnitude <= 10 then
+                obj:FindFirstChildOfClass("Humanoid"):TakeDamage(50)
+            end
+        end
+    end
+end
+
+-- Activar golpe épico con click / toque
+mouse.Button1Down:Connect(function()
+    local targetPos = mouse.Hit.Position
+    golpeEpico(targetPos)
+end)
+
+print("🔥 Nikollvesga Ultra Épico activo! Aparece volando, saca espada y golpea con toque.")
