@@ -1,0 +1,79 @@
+local workspace = game:GetService("Workspace")
+local RunService = game:GetService("RunService")
+local Lighting = game:GetService("Lighting")
+local player = game.Players.LocalPlayer
+local gui = player:WaitForChild("PlayerGui")
+
+-- 1️⃣ Cambiar cielo a amarillo
+Lighting.Ambient = Color3.fromRGB(255, 255, 200)
+Lighting.OutdoorAmbient = Color3.fromRGB(255, 255, 150)
+
+-- 2️⃣ Crear nube flotante
+local cloud = Instance.new("Part")
+cloud.Size = Vector3.new(20,5,20)
+cloud.Anchored = true
+cloud.Position = Vector3.new(0,50,0)
+cloud.BrickColor = BrickColor.new("Institutional white")
+cloud.Material = Enum.Material.SmoothPlastic
+cloud.Name = "TacoCloud"
+cloud.Parent = workspace
+
+-- 3️⃣ Función para crear tacos cayendo del cielo
+local function spawnTaco()
+    local taco = Instance.new("Part")
+    taco.Size = Vector3.new(2,1,1)
+    taco.BrickColor = BrickColor.new("Bright yellow")
+    taco.Anchored = false
+    taco.Position = cloud.Position + Vector3.new(math.random(-10,10),-3,math.random(-10,10))
+    taco.Parent = workspace
+
+    local mesh = Instance.new("SpecialMesh")
+    mesh.MeshType = Enum.MeshType.FileMesh
+    mesh.MeshId = "rbxassetid://70053154" -- Mesh del taco
+    mesh.TextureId = "rbxassetid://70053155" -- Textura del taco
+    mesh.Parent = taco
+
+    -- Los tacos quedan en el piso (no se destruyen al tocar el suelo)
+    taco.Touched:Connect(function(hit)
+        if hit:IsA("BasePart") and hit.Name == "Baseplate" then
+            taco.Anchored = true -- Queda en el suelo
+        end
+    end)
+end
+
+-- Hacer que los tacos caigan constantemente
+RunService.RenderStepped:Connect(function()
+    spawnTaco()
+end)
+
+-- 4️⃣ Bocina visible y simple (realista)
+local horn = Instance.new("Part")
+horn.Size = Vector3.new(4,4,10)
+horn.BrickColor = BrickColor.new("Really red")
+horn.Anchored = true
+horn.Position = Vector3.new(30,5,0)
+horn.Material = Enum.Material.Metal
+horn.Name = "GiantHorn"
+horn.Parent = workspace
+
+-- Cono de la bocina
+local cone = Instance.new("SpecialMesh")
+cone.MeshType = Enum.MeshType.Cone
+cone.Scale = Vector3.new(4,10,4)
+cone.Parent = horn
+
+-- 5️⃣ Música desde la bocina
+local sound = Instance.new("Sound")
+sound.SoundId = "rbxassetid://142376088" -- It's Raining Tacos
+sound.Volume = 1
+sound.Looped = true
+sound.Parent = horn
+sound:Play()
+
+-- 6️⃣ Mensaje divertido en pantalla
+local textLabel = Instance.new("TextLabel")
+textLabel.Text = "¡Yeyey! ¡Tacos cayendo del cielo!"
+textLabel.Size = UDim2.new(0, 500, 0, 50)
+textLabel.Position = UDim2.new(0.5, -250, 0.1, 0)
+textLabel.BackgroundTransparency = 0.5
+textLabel.BackgroundColor3 = Color3.fromRGB(255,
