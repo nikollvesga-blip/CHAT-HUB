@@ -1,0 +1,65 @@
+-- Nikollvesga Gigante + Bola de Fuego KRNL
+
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+local hrp = character:WaitForChild("HumanoidRootPart")
+local RunService = game:GetService("RunService")
+local mouse = player:GetMouse()
+
+-- 1️⃣ Transformación gigante
+for _, part in pairs(character:GetChildren()) do
+    if part:IsA("BasePart") then
+        part.Size = part.Size * 5
+        part.BrickColor = BrickColor.new("Bright green")
+    end
+end
+humanoid.HipHeight = humanoid.HipHeight * 5
+humanoid.WalkSpeed = 30
+humanoid.JumpPower = 50
+
+-- 2️⃣ Función para lanzar bola de fuego
+local function lanzarBola()
+    local fireball = Instance.new("Part")
+    fireball.Size = Vector3.new(4,4,4)
+    fireball.Shape = Enum.PartType.Ball
+    fireball.Material = Enum.Material.Neon
+    fireball.BrickColor = BrickColor.new("Bright orange")
+    fireball.Position = hrp.Position + hrp.CFrame.LookVector * 10 + Vector3.new(0,5,0)
+    fireball.Anchored = false
+    fireball.CanCollide = false
+    fireball.Parent = workspace
+
+    -- Efecto de fuego
+    local fire = Instance.new("Fire")
+    fire.Heat = 20
+    fire.Size = 10
+    fire.Color = Color3.fromRGB(255,150,0)
+    fire.SecondaryColor = Color3.fromRGB(255,50,0)
+    fire.Parent = fireball
+
+    -- Velocidad de la bola
+    local bv = Instance.new("BodyVelocity")
+    bv.Velocity = hrp.CFrame.LookVector * 100
+    bv.MaxForce = Vector3.new(1e5,1e5,1e5)
+    bv.Parent = fireball
+
+    -- Daño al tocar jugadores
+    fireball.Touched:Connect(function(hit)
+        local h = hit.Parent:FindFirstChildOfClass("Humanoid")
+        if h and hit.Parent ~= character then
+            h:TakeDamage(50)
+            fireball:Destroy()
+        end
+    end)
+
+    -- Auto eliminar después de 5 segundos
+    game.Debris:AddItem(fireball,5)
+end
+
+-- 3️⃣ Activar con click o toque
+mouse.Button1Down:Connect(function()
+    lanzarBola()
+end)
+
+print("🔥 Nikollvesga Gigante listo! Click/tap para lanzar bolas de fuego y hacer daño.")
