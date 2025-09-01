@@ -1,0 +1,80 @@
+-- Nikollvesga Gigante + Bola de Fuego con sonido KRNL
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local humanoid = character:WaitForChild("Humanoid")
+local hrp = character:WaitForChild("HumanoidRootPart")
+local RunService = game:GetService("RunService")
+local mouse = player:GetMouse()
+local Debris = game:GetService("Debris")
+
+-- 1️⃣ Transformación gigante
+for _, part in pairs(character:GetChildren()) do
+    if part:IsA("BasePart") then
+        part.Size = part.Size * 5
+        part.BrickColor = BrickColor.new("Bright green")
+    end
+end
+humanoid.HipHeight = humanoid.HipHeight * 5
+humanoid.WalkSpeed = 30
+humanoid.JumpPower = 50
+
+-- 2️⃣ Función para lanzar bola de fuego
+local function lanzarBola(direccion)
+    local fireball = Instance.new("Part")
+    fireball.Size = Vector3.new(4,4,4)
+    fireball.Shape = Enum.PartType.Ball
+    fireball.Material = Enum.Material.Neon
+    fireball.BrickColor = BrickColor.new("Bright orange")
+    fireball.Position = hrp.Position + Vector3.new(0,5,0)
+    fireball.Anchored = false
+    fireball.CanCollide = false
+    fireball.Parent = workspace
+
+    -- Efecto de fuego
+    local fire = Instance.new("Fire")
+    fire.Heat = 20
+    fire.Size = 10
+    fire.Color = Color3.fromRGB(255,150,0)
+    fire.SecondaryColor = Color3.fromRGB(255,50,0)
+    fire.Parent = fireball
+
+    -- Sonido al lanzar
+    local launchSound = Instance.new("Sound")
+    launchSound.SoundId = "rbxassetid://9118821631" -- sonido de fuego lanzado
+    launchSound.Volume = 1
+    launchSound.Parent = fireball
+    launchSound:Play()
+
+    -- Velocidad de la bola
+    local bv = Instance.new("BodyVelocity")
+    bv.Velocity = direccion * 100
+    bv.MaxForce = Vector3.new(1e5,1e5,1e5)
+    bv.Parent = fireball
+
+    -- Daño y sonido al impactar
+    fireball.Touched:Connect(function(hit)
+        local h = hit.Parent:FindFirstChildOfClass("Humanoid")
+        if h and hit.Parent ~= character then
+            h:TakeDamage(50)
+            local hitSound = Instance.new("Sound")
+            hitSound.SoundId = "rbxassetid://12222225" -- sonido de impacto (ejemplo)
+            hitSound.Volume = 1
+            hitSound.Parent = fireball
+            hitSound:Play()
+            fireball:Destroy()
+        end
+    end)
+
+    -- Auto eliminar después de 5 segundos
+    Debris:AddItem(fireball,5)
+end
+
+-- 3️⃣ Activar con click/tap
+mouse.Button1Down:Connect(function()
+    -- Hacia adelante
+    lanzarBola(hrp.CFrame.LookVector)
+    -- Hacia abajo
+    lanzarBola(Vector3.new(0,-1,0))
+end)
+
+print("🔥 Nikollvesga Gigante listo! Click/tap para lanzar bolas de fuego hacia adelante y abajo.")
