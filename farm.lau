@@ -1,0 +1,32 @@
+local Workspace = game:GetService("Workspace")
+local RunService = game:GetService("RunService")
+local Lighting = game:GetService("Lighting")
+local Players = game:GetService("Players")
+
+-- Cielo amarillo
+Lighting.Ambient = Color3.fromRGB(255, 255, 200)
+Lighting.OutdoorAmbient = Color3.fromRGB(255, 255, 150)
+
+-- Nube visible
+local cloud = Instance.new("Part")
+cloud.Size = Vector3.new(20,5,20)
+cloud.Anchored = true
+cloud.Position = Vector3.new(0,50,0)
+cloud.BrickColor = BrickColor.new("Institutional white")
+cloud.Material = Enum.Material.SmoothPlastic
+cloud.CanCollide = false
+cloud.Parent = Workspace
+
+-- Bocina realista (base + cono)
+local hornBase = Instance.new("Part")
+hornBase.Size = Vector3.new(6,2,6)
+hornBase.Position = Vector3.new(30,3,0)
+hornBase.Anchored = true
+hornBase.BrickColor = BrickColor.new("Really red")
+hornBase.Material = Enum.Material.Metal
+hornBase.Parent = Workspace
+
+local hornCone = Instance.new("Part")
+hornCone.Size = Vector3.new(4,6,4)
+hornCone.Position = Vector3.new(30,6,0)
+hornCone.Anch
