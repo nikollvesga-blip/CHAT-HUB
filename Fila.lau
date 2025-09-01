@@ -1,0 +1,69 @@
+-- Script de vuelo con fuego y truenos
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local hrp = character:WaitForChild("HumanoidRootPart")
+local flying = true
+local speed = 50 -- Velocidad de vuelo
+
+-- Función para crear fuego
+local function createFire(part)
+    local fire = Instance.new("Fire")
+    fire.Heat = 25
+    fire.Size = 10
+    fire.Parent = part
+end
+
+-- Función para crear truenos
+local function thunderEffect(position)
+    local thunder = Instance.new("Part")
+    thunder.Size = Vector3.new(2, 2, 2)
+    thunder.Anchored = true
+    thunder.CanCollide = false
+    thunder.Position = position
+    thunder.BrickColor = BrickColor.new("Really black")
+    thunder.Parent = workspace
+
+    local light = Instance.new("PointLight")
+    light.Color = Color3.fromRGB(255, 255, 255)
+    light.Range = 15
+    light.Brightness = 5
+    light.Parent = thunder
+
+    game.Debris:AddItem(thunder, 0.5)
+end
+
+-- Activar fuego en tu HumanoidRootPart
+createFire(hrp)
+
+-- Movimiento de vuelo
+local uis = game:GetService("UserInputService")
+local runService = game:GetService("RunService")
+
+local velocity = Vector3.new(0,0,0)
+
+uis.InputBegan:Connect(function(input)
+    if input.KeyCode == Enum.KeyCode.Space then
+        velocity = Vector3.new(0, speed, 0)
+    elseif input.KeyCode == Enum.KeyCode.LeftShift then
+        velocity = Vector3.new(0, -speed, 0)
+    end
+end)
+
+uis.InputEnded:Connect(function(input)
+    if input.KeyCode == Enum.KeyCode.Space or input.KeyCode == Enum.KeyCode.LeftShift then
+        velocity = Vector3.new(0,0,0)
+    end
+end)
+
+runService.RenderStepped:Connect(function(delta)
+    if flying then
+        hrp.Velocity = velocity
+        -- Cada 2 segundos cae un trueno aleatorio alrededor
+        if math.random() < 0.02 then
+            local randPos = hrp.Position + Vector3.new(math.random(-20,20), 50, math.random(-20,20))
+            thunderEffect(randPos)
+        end
+    end
+end)
+
+print("¡Vuelo activado con fuego y truenos!")
