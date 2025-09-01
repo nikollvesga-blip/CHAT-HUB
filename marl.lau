@@ -1,0 +1,88 @@
+local Workspace = game:GetService("Workspace")
+local RunService = game:GetService("RunService")
+local Lighting = game:GetService("Lighting")
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+local gui = player:WaitForChild("PlayerGui")
+
+-- 1️⃣ Cielo amarillo
+Lighting.Ambient = Color3.fromRGB(255, 255, 200)
+Lighting.OutdoorAmbient = Color3.fromRGB(255, 255, 150)
+
+-- 2️⃣ Nube visible
+local cloud = Instance.new("Part")
+cloud.Size = Vector3.new(20,5,20)
+cloud.Anchored = true
+cloud.Position = Vector3.new(0,50,0)
+cloud.BrickColor = BrickColor.new("Institutional white")
+cloud.Material = Enum.Material.SmoothPlastic
+cloud.CanCollide = false
+cloud.Name = "TacoCloud"
+cloud.Parent = Workspace
+
+-- 3️⃣ Función para crear tacos
+local function spawnTaco()
+    local taco = Instance.new("Part")
+    taco.Size = Vector3.new(2,1,1)
+    taco.BrickColor = BrickColor.new("Bright yellow")
+    taco.Material = Enum.Material.SmoothPlastic
+    taco.Anchored = false
+    taco.CanCollide = false
+    taco.Position = cloud.Position + Vector3.new(math.random(-10,10),-3,math.random(-10,10))
+    taco.Parent = Workspace
+
+    -- Quedan visibles en el piso
+    RunService.Heartbeat:Connect(function()
+        if taco.Position.Y <= 3 then
+            taco.Anchored = true
+        end
+    end)
+end
+
+-- Caída constante de tacos
+RunService.RenderStepped:Connect(function()
+    if math.random() < 0.5 then
+        spawnTaco()
+    end
+end)
+
+-- 4️⃣ Bocina visible (base + cono)
+local hornBase = Instance.new("Part")
+hornBase.Size = Vector3.new(6,2,6)
+hornBase.Position = Vector3.new(30,3,0)
+hornBase.Anchored = true
+hornBase.BrickColor = BrickColor.new("Really red")
+hornBase.Material = Enum.Material.Metal
+hornBase.Parent = Workspace
+
+local hornCone = Instance.new("Part")
+hornCone.Size = Vector3.new(4,6,4)
+hornCone.Position = Vector3.new(30,6,0)
+hornCone.Anchored = true
+hornCone.BrickColor = BrickColor.new("Bright red")
+hornCone.Material = Enum.Material.Metal
+hornCone.Parent = Workspace
+
+local coneMesh = Instance.new("SpecialMesh")
+coneMesh.MeshType = Enum.MeshType.Cone
+coneMesh.Scale = Vector3.new(1,1,1)
+coneMesh.Parent = hornCone
+
+-- 5️⃣ Música desde la bocina
+local sound = Instance.new("Sound")
+sound.SoundId = "rbxassetid://142376088"
+sound.Volume = 1
+sound.Looped = true
+sound.Parent = hornCone
+sound:Play()
+
+-- 6️⃣ Mensaje en pantalla
+local textLabel = Instance.new("TextLabel")
+textLabel.Text = "¡Yeyey! ¡Tacos cayendo del cielo!"
+textLabel.Size = UDim2.new(0, 500, 0, 50)
+textLabel.Position = UDim2.new(0.5, -250, 0.1, 0)
+textLabel.BackgroundTransparency = 0.5
+textLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+textLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
+textLabel.TextScaled = true
+textLabel.Parent = gui
