@@ -1,0 +1,43 @@
+-- Script para KRNL: Música, mensaje y clones de tu skin
+
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local workspace = game:GetService("Workspace")
+local gui = player:WaitForChild("PlayerGui")
+
+-- Reproducir la canción
+local sound = Instance.new("Sound")
+sound.SoundId = "rbxassetid://142376088"
+sound.Volume = 1
+sound.Looped = true
+sound.Parent = workspace
+sound:Play()
+
+-- Mostrar mensaje en la pantalla
+local textLabel = Instance.new("TextLabel")
+textLabel.Text = "¡Yeyey! ¡Escucha 'It's Raining Tacos'!"
+textLabel.Size = UDim2.new(0, 400, 0, 50)
+textLabel.Position = UDim2.new(0.5, -200, 0.1, 0)
+textLabel.BackgroundTransparency = 0.5
+textLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+textLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
+textLabel.TextScaled = true
+textLabel.Parent = gui
+
+-- Función para clonar tu personaje
+local function cloneCharacter()
+    local clone = character:Clone()
+    clone.Parent = workspace
+    clone:SetPrimaryPartCFrame(CFrame.new(math.random(-50, 50), 10, math.random(-50, 50)))
+    for _, part in pairs(clone:GetDescendants()) do
+        if part:IsA("BasePart") then
+            part.CanCollide = false
+        end
+    end
+end
+
+-- Crear clones cada 5 segundos
+while true do
+    cloneCharacter()
+    wait(5)
+end
