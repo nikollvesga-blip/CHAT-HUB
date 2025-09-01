@@ -1,0 +1,88 @@
+local player = game.Players.LocalPlayer
+local character = player.Character or player.CharacterAdded:Wait()
+local workspace = game:GetService("Workspace")
+local gui = player:WaitForChild("PlayerGui")
+local RunService = game:GetService("RunService")
+
+-- 1️⃣ Música
+local sound = Instance.new("Sound")
+sound.SoundId = "rbxassetid://142376088" -- It's Raining Tacos
+sound.Volume = 1
+sound.Looped = true
+sound.Parent = workspace
+sound:Play()
+
+-- 2️⃣ Mensaje en pantalla
+local textLabel = Instance.new("TextLabel")
+textLabel.Text = "¡Yeyey! ¡Escucha 'It's Raining Tacos'!"
+textLabel.Size = UDim2.new(0, 400, 0, 50)
+textLabel.Position = UDim2.new(0.5, -200, 0.1, 0)
+textLabel.BackgroundTransparency = 0.5
+textLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+textLabel.TextColor3 = Color3.fromRGB(0, 0, 0)
+textLabel.TextScaled = true
+textLabel.Parent = gui
+
+-- 3️⃣ Función para crear tacos cayendo
+local function spawnTaco()
+    local taco = Instance.new("Part")
+    taco.Size = Vector3.new(2,1,1)
+    taco.BrickColor = BrickColor.new("Bright yellow")
+    taco.Shape = Enum.PartType.Block
+    taco.Position = Vector3.new(math.random(-50,50),50,math.random(-50,50))
+    taco.Anchored = false
+    taco.Parent = workspace
+    local mesh = Instance.new("SpecialMesh", taco)
+    mesh.MeshId = "rbxassetid://70053154" -- ID de taco
+    mesh.TextureId = "rbxassetid://70053155" -- Textura de taco
+
+    -- Que caiga y desaparezca al tocar suelo
+    taco.Touched:Connect(function(hit)
+        if hit:IsA("BasePart") and hit.Name ~= "Baseplate" then
+            taco:Destroy()
+        end
+    end)
+end
+
+-- Spawn continuo de tacos
+RunService.RenderStepped:Connect(function()
+    if math.random() < 0.05 then
+        spawnTaco()
+    end
+end)
+
+-- 4️⃣ Clon gigante con taco
+local clone = character:Clone()
+clone.Name = player.Name .. "_Giant"
+clone.Parent = workspace
+
+-- Escalar
+local scaleFactor = 5
+for _, part in pairs(clone:GetDescendants()) do
+    if part:IsA("BasePart") then
+        part.Size = part.Size * scaleFactor
+        part.CanCollide = false
+    elseif part:IsA("Accessory") and part:FindFirstChild("Handle") then
+        part.Handle.Size = part.Handle.Size * scaleFactor
+    end
+end
+
+clone:SetPrimaryPartCFrame(CFrame.new(0,10,0))
+
+-- Crear taco en su mano
+local tacoInHand = Instance.new("Part")
+tacoInHand.Size = Vector3.new(2,1,1)
+tacoInHand.BrickColor = BrickColor.new("Bright yellow")
+tacoInHand.Shape = Enum.PartType.Block
+tacoInHand.Parent = clone
+local mesh = Instance.new("SpecialMesh", tacoInHand)
+mesh.MeshId = "rbxassetid://70053154"
+mesh.TextureId = "rbxassetid://70053155"
+
+-- Posicionar taco en la mano
+local rightHand = clone:FindFirstChild("RightHand") or clone:FindFirstChild("Right Arm")
+if rightHand then
+    tacoInHand.CFrame = rightHand.CFrame * CFrame.new(0,0,1)
+end
+
+print("¡Música, tacos y clon gigante activados!")
